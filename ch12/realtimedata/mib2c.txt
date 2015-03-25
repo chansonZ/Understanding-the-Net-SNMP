@@ -1,0 +1,46 @@
+
+
+
+[/mnt/hgfs/shareLinux/snmp/ch9/src/realtimedata]# mib2c -c mib2c.iterate_access.conf BOOK-APP-MIB::realTimeData
+writing to realTimeData.h
+writing to realTimeData_columns.h
+writing to realTimeData_enums.h
+writing to realTimeData.c
+writing to realTimeData_checkfns_local.h
+writing to realTimeData_checkfns_local.c
+writing to realTimeData_checkfns.h
+writing to realTimeData_checkfns.c
+writing to realTimeData_access.h
+writing to realTimeData_access.c
+writing to -
+
+**********************************************************************
+NOTE:  The only files you MUST modify should be the following:
+  realTimeData_access.c
+  realTimeData_access.h
+  realTimeData_checkfns_local.h
+  realTimeData_checkfns_local.c
+**********************************************************************
+
+running indent on realTimeData_access.c
+running indent on realTimeData_checkfns_local.c
+running indent on realTimeData_access.h
+running indent on realTimeData_enums.h
+running indent on realTimeData.c
+running indent on realTimeData.h
+running indent on realTimeData_columns.h
+running indent on realTimeData_checkfns.c
+running indent on realTimeData_checkfns_local.h
+running indent on realTimeData_checkfns.h
+[/mnt/hgfs/shareLinux/snmp/ch9/src/realtimedata]# 
+
+
+[/mnt/hgfs/shareLinux/snmp/ch9/src]# mib2c -c mib2c.old-api.conf BOOK-APP-MIB::realTimeData
+writing to realTimeData.h
+writing to realTimeData.c
+running indent on realTimeData.c
+running indent on realTimeData.h
+
+
+
+

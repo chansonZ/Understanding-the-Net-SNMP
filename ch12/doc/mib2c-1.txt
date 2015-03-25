@@ -1,0 +1,9 @@
+
+@open -@
+ @foreach $t table@
+mibnode    type    oidlength    OID
+-----------------------------------------------------
+     @foreach $c column@
+$c	$c.type	$c.oidlength	$c.objectID
+     @end@
+ @end@

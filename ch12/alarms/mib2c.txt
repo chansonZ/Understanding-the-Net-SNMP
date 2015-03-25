@@ -1,0 +1,16 @@
+
+
+mib2c -c mib2c.notify.conf BOOK-APP-MIB::sysAlarms
+
+[/mnt/hgfs/shareLinux/snmp/ch9/src/alarms]# mib2c -c mib2c.notify.conf BOOK-APP-MIB::sysAlarms
+writing to sysAlarms.h
+writing to sysAlarms.c
+running indent on sysAlarms.h
+running indent on sysAlarms.c
+
+
+[/mnt/hgfs/shareLinux/snmp/ch9/src/alarms]# mib2c -c mib2c.old-api.conf BOOK-APP-MIB::notificationObjs
+writing to notificationObjs.h
+writing to notificationObjs.c
+running indent on notificationObjs.c
+running indent on notificationObjs.h

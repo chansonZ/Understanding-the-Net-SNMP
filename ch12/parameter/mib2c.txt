@@ -1,0 +1,8 @@
+
+mib2c -c mib2c.old-api.conf BOOK-APP-MIB::parameter
+
+[/mnt/hgfs/shareLinux/snmp/ch9/src/parameter]# mib2c -c mib2c.old-api.conf BOOK-APP-MIB::parameter
+writing to parameter.h
+writing to parameter.c
+running indent on parameter.c
+running indent on parameter.h

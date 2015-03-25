@@ -1,0 +1,9 @@
+./configure --prefix="/usr/local/mynetsnmp/" --with-openssl=internal \
+-with-default-snmp-version="2" --with-sys-contact="xtdwxk@gmail.com" \
+--with-sys-location="shenzhenXL" \
+--with-logfile=/usr/local/mynetsnmp/var/log/snmpd.log \
+--with-persistent-directory=/usr/local/mynetsnmp/var/net-snmp \
+--with-python-modules \
+--with-cflags="-g -O0" \
+--with-libs="-lsnmpipc" \
+--with-mib-modules="book-app-mib/public/public,book-app-mib/parameter/parameter,book-app-mib/realtimedata/realTimeData,book-app-mib/alarms/notificationObjs"
