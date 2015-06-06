@@ -1,7 +1,7 @@
 /************************************************************
  * Copyright (C)	GPL
  * FileName:		snmpipc.h
- * Author:		�Ŵ�ǿ
+ * Author:		张春强
  * Date:			2014-08
  ***********************************************************/
 
@@ -12,7 +12,7 @@
 extern "C" {
 #endif   /*__cplusplus */
 
-// ��֤��Ŀ¼�Ѿ�����
+// 保证该目录已经存在
 #define APP_DIR		"/usr/local/etc/app/shm/"
 #define SHM_CONF	"shm.conf"
 #define SEM_CONF	"sem.conf"
@@ -24,27 +24,27 @@ extern "C" {
 #define FAILURE -1
 typedef int BOOLEAN;
 
-// �������Ͷ���
+// 数据类型定义
 typedef enum
 {
-	// �� 0 ��ʼ�������飬�ź���ƥ��
-	SHM_PARADATA = 0,                   // ������������
-	SHM_REALDATA,                       // ʵʱ��������
-	SHM_ALARM,                          // �澯��������
-	SHM_CTRL,                           // ������������
+	// 从 0 开始，与数组，信号量匹配
+	SHM_PARADATA = 0,                   // 参数数据类型
+	SHM_REALDATA,                       // 实时数据类型
+	SHM_ALARM,                          // 告警数据类型
+	SHM_CTRL,                           // 控制数据类型
 } SHM_TYPE;
 #define SHM_PARAMETER ( SHM_PARADATA )
 
 
 typedef struct
 {
-	int iSize;                          //��ʵ�ṹ���С��ͨ�ýṹ���С
+	int iSize;                          //真实结构体大小或通用结构体大小
 	void *pShmAddr;
 } T_ShareMem;
 
-#define SHM_TYPE_NUM ( SHM_CTRL + 1 )   // ��Ҫ�����ڹ����ڴ��е�������������
+#define SHM_TYPE_NUM ( SHM_CTRL + 1 )   // 需要保存在共享内存中的数据类型数量
 
-// �ź�������:ÿ����������һ���ź���
+// 信号量数量:每种数据种类一个信号量
 #define SEM_NUM SHM_TYPE_NUM
 
 #define TO_SHM		( 0 )
@@ -53,11 +53,11 @@ typedef struct
 #define SLAVE	( 0 )
 #define MASTER	( 1 )
 
-#define MAX_CHAR_LEN (32)       // ϵͳ���ַ���������󳤶ȣ�4�ı���
+#define MAX_CHAR_LEN (32)       // 系统中字符串参数最大长度，4的倍数
 typedef   union
 {
-	int		iValue;                 // ͳһ����������
-	char	acValue[MAX_CHAR_LEN];  // ͳһ���ַ�����������
+	int		iValue;                 // 统一的整形数据
+	char	acValue[MAX_CHAR_LEN];  // 统一的字符串类型数据
 } U_Value;
 
 
@@ -68,7 +68,7 @@ typedef struct
 	int iLen;
 } T_MapTable;
 
-/*��������: ģ�����Σ��ַ��ͣ��򵥱�һ���е��� */
+/*参数数据: 模拟整形，字符型，简单表一多行单列 */
 #define C_ROW_NUM (3)
 typedef struct
 {
@@ -79,28 +79,28 @@ typedef struct
 } T_ParaData;
 typedef enum
 {
-	// �� 0 ��ʼ,����
+	// 从 0 开始,连续
 	PARA_A = 0,
 	PARA_B ,
-	PARA_C1 ,//2,c�ڽṹ���е���ʼλ�����
+	PARA_C1 ,//2,c在结构体中的起始位置序号
 	PARA_C2 ,
 	PARA_C3,
 }E_PARA;
 // 
 #define  C_OFFSET (PARA_C1)
-// �������������б���������
+// 上述参数类型中变量的数量
 //#define PARA_NUM (6)
 
 
-/* ʵʱ����,ȫ����ʾΪ���Σ�ʵ����������侫�Ƚ��д�����ֻ��
-   SNMP��NMS����ʾ�ɶ���OID�﷨����
-   �����ע�����ֱ�ʾ�ñ����ڸ��������Ͳ��ֵĹ����ڴ��е�λ�á���Ψһ����ʵʱ���ݹ���λ�õ���ʼ��ַΪ
-   0x1234����ô0x1234+0�ͱ�ʾ����a�ĵ�ַ
+/* 实时数据,全部显示为整形，实际情况根据其精度进行处理。只读
+   SNMP中NMS的显示由对象OID语法控制
+   后面的注释数字表示该变量在该数据类型部分的共享内存中的位置——唯一。如实时数据共享位置的起始地址为
+   0x1234，那么0x1234+0就表示变量a的地址
  */
 
 
-/*ʵʱ����:ģ�����Σ��ַ��ͣ��򵥱����ж��� */
-#define GROUP_NUM (2)// ʾ��ĳ����-������Ԫ��-��������
+/*实时数据:模拟整形，字符型，简单表多行多列 */
+#define GROUP_NUM (2)// 示例某个组-表格列元素-两行两列
 struct _aGroup
 {
 	int x;
@@ -109,9 +109,9 @@ struct _aGroup
 };
 
 /*
-���No.	x y
-��һ��	0 1
-�ڶ���	2 3
+序号No.	x y
+第一行	0 1
+第二行	2 3
 z:		4
 */
 typedef struct
@@ -122,7 +122,7 @@ typedef struct
 } T_RealData;
 typedef enum
 {
-	// �� 0 ��ʼ,����
+	// 从 0 开始,连续
 	XY0X = 0,
 	XY0Y ,
 	XY1X ,//2
@@ -141,27 +141,27 @@ typedef struct
 } T_AlarmData;
 typedef enum
 {
-	// �� 0 ��ʼ,����
+	// 从 0 开始,连续
 	ALARM1 = 0,
 	ALARM2,
 	ALARM_COUNTER,//2
 }E_ALARM;
 
 
-// Ϊ�˽�ʡ�ڴ棬�ýṹ�岢û��Ӧ�õ�ʵʱ������
+// 为了节省内存，该结构体并没有应用到实时数据中
 typedef struct
 {
-	// ��������Ҫ�ֶ�ά������Ȼ���ǿ��Խ��ɳ����һЩǰ�˽ű��Զ�����
-	int		iNo;    // �����ı��ֵ(�������ڲ������е�����������0��ʼ)
-	int		iLen;   // ���ݵ��ֽڳ��ȣ����������Ϊsizeof(int)���ñ����б�Ҫ�𣡣�
-	U_Value uValue; //������ֵ
+	// 这两个需要手动维护。当然我们可以将由程序的一些前端脚本自动生成
+	int		iNo;    // 参数的编号值(此数据在参数表中的索引，即从0开始)
+	int		iLen;   // 数据的字节长度，如对于整形为sizeof(int)。
+	U_Value uValue; //参数的值
 } T_ShmCellVal;
 
 #ifndef  MIN
 #define  MIN( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 
-// ������
+// 测试用
 int del_sem( void );
 int del_shm( void );
 
