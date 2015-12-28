@@ -1,7 +1,7 @@
 /************************************************************
  * Copyright (C)	GPL
  * FileName:		snmpipc.c
- * Author:		ÕÅ´ºÇ¿
+ * Author:		å¼ æ˜¥å¼º
  * Date:			2014-08
  * gcc -g -Wall -fPIC -shared snmpipc.c -o libsnmpipc.so
  ***********************************************************/
@@ -24,12 +24,12 @@ static int update_shm_data( int dType,T_ShmCellVal *pValue, int diretion );
 // struct seminfo *__buf; /* buffer for IPC_INFO */
 // };
 
-// ĞÅºÅÁ¿ID
+// ä¿¡å·é‡ID
 static int s_SemId;
 static int s_ShmId;
 
 
-// ÕâÀïÊÖ¹¤Î¬»¤,½á¹¹ÌåµÄÓ³Éä±í
+// è¿™é‡Œæ‰‹å·¥ç»´æŠ¤,ç»“æ„ä½“çš„æ˜ å°„è¡¨
 static T_MapTable s_tParaMapTable[] =
 {
 	{ .iNo = PARA_A, .iOffset = offsetof( T_ParaData, a ),                    .iLen = sizeof( int ) },
@@ -59,7 +59,7 @@ static T_MapTable s_tAlarmDtMapTable[] =
 #define ALARMDATA_NUM ( sizeof( s_tAlarmDtMapTable ) / sizeof( T_MapTable ) )
 
 
-// Êı¾İÁ¿´óĞ¡¶¨Òå
+// æ•°æ®é‡å¤§å°å®šä¹‰
 static int s_acMaxObjNum[SHM_TYPE_NUM] =
 {
 	PARA_NUM,
@@ -68,7 +68,7 @@ static int s_acMaxObjNum[SHM_TYPE_NUM] =
 	0,
 };
 
-// ¹²ÏíÄÚ´æ´óĞ¡ÓëµØÖ·
+// å…±äº«å†…å­˜å¤§å°ä¸åœ°å€
 static T_ShareMem s_atShareMem[] =
 {
 	{ .iSize = PARA_NUM * sizeof( T_ShmCellVal ), .pShmAddr = NULL },
@@ -84,7 +84,7 @@ static int get_maxobj_num(int dType);
 static void update_para_data(T_ParaData* pData, int direction);
 static void update_realtime_data(T_RealData* pData, int direction);
 /***********************************************************
-* Description:    ·µ»ØdTypeÊı¾İÀàĞÍÖĞ¶ÔÏóµÄÊıÁ¿
+* Description:    è¿”å›dTypeæ•°æ®ç±»å‹ä¸­å¯¹è±¡çš„æ•°é‡
 ***********************************************************/
 static int get_maxobj_num(int dType)
 {
@@ -97,7 +97,7 @@ static int get_maxobj_num(int dType)
 }
 
 /***********************************************************
-* Description:    »ñÈ¡dTypeÊı¾İÀàĞÍMAPÄÚ´æµÄÆğÊ¼µØÖ·
+* Description:    è·å–dTypeæ•°æ®ç±»å‹MAPå†…å­˜çš„èµ·å§‹åœ°å€
 ***********************************************************/
 T_MapTable* get_maptable(int dType)
 {
@@ -117,17 +117,17 @@ T_MapTable* get_maptable(int dType)
 }
 
 /***********************************************************
-* Description:    ·µ»Ø¿½±´µÄ³¤¶È
+* Description:    è¿”å›æ‹·è´çš„é•¿åº¦
 ***********************************************************/
 static int app_memcpy( void* pValInner, void* pShmVal, int iLen, int diretion )
 {
 	if( NULL == pValInner || NULL == pShmVal || iLen <= 0 )
 		return 0;
 
-	if( TO_SHM == diretion )            // ÉèÖÃµ½¹²ÏíÄÚ´æ
+	if( TO_SHM == diretion )            // è®¾ç½®åˆ°å…±äº«å†…å­˜
 	{
 		memcpy( pShmVal, pValInner, iLen );
-	} else if( FROM_SHM == diretion )   // ´Ó¹²ÏíÄÚ´æÈ¡
+	} else if( FROM_SHM == diretion )   // ä»å…±äº«å†…å­˜å–
 	{
 		memcpy( pValInner, pShmVal, iLen );
 	} else
@@ -138,7 +138,7 @@ static int app_memcpy( void* pValInner, void* pShmVal, int iLen, int diretion )
 }
 
 /***********************************************************
-* Description:    ¼ì²éÎÄ¼şÊÇ·ñ´æÔÚ£¬²»´æÔÚÔò´´½¨
+* Description:    æ£€æŸ¥æ–‡ä»¶æ˜¯å¦å­˜åœ¨ï¼Œä¸å­˜åœ¨åˆ™åˆ›å»º
 ***********************************************************/
 static void check_file_exist( char *pName )
 {
@@ -148,7 +148,7 @@ static void check_file_exist( char *pName )
 		pF = fopen( pName, "w" );
 		if( pF )
 		{
-			///ËæÒâĞ´¸öÂ·¾¶µ½¸ÃÎÄ¼şÖĞ
+			///éšæ„å†™ä¸ªè·¯å¾„åˆ°è¯¥æ–‡ä»¶ä¸­
 			fwrite( pName, strlen( pName ), 1, pF );
 			fclose( pF );
 		}else
@@ -163,9 +163,9 @@ static void check_file_exist( char *pName )
 static int get_shm_size()
 {
 	int i =0,j=0;
-	// ¼ÆËã¹²ÏíÄÚ´æ×Ü´óĞ¡
+	// è®¡ç®—å…±äº«å†…å­˜æ€»å¤§å°
 	for( i = 0; i < SHM_ARRAY_SIZE; i++ )
-		j += j + s_atShareMem[i].iSize;
+		j += s_atShareMem[i].iSize;
 	return j;
 }
 
@@ -173,10 +173,10 @@ static int get_shm_key()
 {
 	char acFile[256] = { 0 };
 	int iShmKey;
-	// ¸ÃÎÄ¼şÓÃÓÚ»ñÈ¡¹²ÏíÄÚ´æµÄkey
+	// è¯¥æ–‡ä»¶ç”¨äºè·å–å…±äº«å†…å­˜çš„key
 	sprintf( acFile, "%s%s", APP_DIR, SHM_CONF );
 	check_file_exist( acFile );
-	// »ñµÃkeyÖµ
+	// è·å¾—keyå€¼
 	iShmKey = ftok( acFile, SHM_KEY_ID );
 	if( iShmKey == (key_t)-1 )
 	{
@@ -193,7 +193,7 @@ static int shmget_create(int iShmKey,int iShmSize)
 	if( iShmKey == FAILURE|| iShmSize <=0)
 		return FAILURE;
 
-	// ´´½¨ËùÓĞÓÃ»§¿É¶ÁĞ´µÄ¹²ÏíÄÚ´æ
+	// åˆ›å»ºæ‰€æœ‰ç”¨æˆ·å¯è¯»å†™çš„å…±äº«å†…å­˜
 	s_ShmId = shmget( iShmKey, iShmSize, 0666 | IPC_CREAT );
 	if( -1 == s_ShmId )
 	{
@@ -209,7 +209,7 @@ static int shmget_get(int iShmKey,int iShmSize)
 	if( iShmKey == FAILURE|| iShmSize <=0)
 		return FAILURE;
 
-	// »ñÈ¡¹²ÏíÄÚ´æ
+	// è·å–å…±äº«å†…å­˜
 	s_ShmId = shmget( iShmKey, iShmSize, 0666 );
 	if( -1 == s_ShmId )
 	{
@@ -227,7 +227,7 @@ static void allocate_shm( void*pShmAddr )
 		printf("NULL ADDRESS!!\n");
 		return;
 	}
-	// Îª¸÷ÀàÊı¾İ·ÖÅä¹²ÏíÄÚ´æÆğÊ¼µØÖ·
+	// ä¸ºå„ç±»æ•°æ®åˆ†é…å…±äº«å†…å­˜èµ·å§‹åœ°å€
 	for( i = 0; i < SHM_ARRAY_SIZE; i++ )
 	{
 		s_atShareMem[i].pShmAddr = pShmAddr;
@@ -238,7 +238,7 @@ static void allocate_shm( void*pShmAddr )
 }
 
 /***********************************************************
-* Description:   »ñÈ¡¹²ÏíÄÚ´æµÄID
+* Description:   è·å–å…±äº«å†…å­˜çš„ID
 ***********************************************************/
 static int get_shmid(  )
 {
@@ -246,7 +246,7 @@ static int get_shmid(  )
 }
 
 /***********************************************************
-* Description:   »ñÈ¡ĞÅºÅÁ¿µÄID
+* Description:   è·å–ä¿¡å·é‡çš„ID
 ***********************************************************/
 static int get_semid(  )
 {
@@ -256,7 +256,7 @@ static int get_semid(  )
 void    *shm_attach( )
 {
 	void    *pShmAddr       = NULL;
-	// ×îºóÒ»¸ö²ÎÊıÎª0 ±íÊ¾¿É¶ÁĞ´
+	// æœ€åä¸€ä¸ªå‚æ•°ä¸º0 è¡¨ç¤ºå¯è¯»å†™
 	pShmAddr = shmat( get_shmid(), NULL, 0 );
 	if( NULL == pShmAddr )
 	{
@@ -268,9 +268,9 @@ void    *shm_attach( )
 }
 /***********************************************************
 * Description:
-   bIsMasterÎªÕæ´´½¨¹²ÏíÄÚ´æ£¬·ñÔò»ñÈ¡¹²ÏíÄÚ´æµÄID£»
-   ×÷Îª¹«¹²¿â£¬¸Ãº¯ÊıÖ»ÒªÖ÷ÒµÎñ½ø³Ìµ÷ÓÃÒ»´Î¾ÍOKÁË£¬
-   ´«Èë²ÎÊıbIsMasterÎª1£¬SNMP´úÀí¿É²»ÓÃµ÷ÓÃ¸Ã½Ó¿Ú£»
+   bIsMasterä¸ºçœŸåˆ›å»ºå…±äº«å†…å­˜ï¼Œå¦åˆ™è·å–å…±äº«å†…å­˜çš„IDï¼›
+   ä½œä¸ºå…¬å…±åº“ï¼Œè¯¥å‡½æ•°åªè¦ä¸»ä¸šåŠ¡è¿›ç¨‹è°ƒç”¨ä¸€æ¬¡å°±OKäº†ï¼Œ
+   ä¼ å…¥å‚æ•°bIsMasterä¸º1ï¼ŒSNMPä»£ç†å¯ä¸ç”¨è°ƒç”¨è¯¥æ¥å£ï¼›
 ***********************************************************/
 static int init_share_memory( BOOLEAN bIsMaster )
 {
@@ -278,12 +278,12 @@ static int init_share_memory( BOOLEAN bIsMaster )
 
 	if( bIsMaster )
 	{
-		// ´´½¨ËùÓĞÓÃ»§¿É¶ÁĞ´µÄ¹²ÏíÄÚ´æ
+		// åˆ›å»ºæ‰€æœ‰ç”¨æˆ·å¯è¯»å†™çš„å…±äº«å†…å­˜
 		if(FAILURE == shmget_create(get_shm_key(),get_shm_size()) )
 			return FAILURE;
 	}else
 	{
-		// »ñÈ¡¹²ÏíÄÚ´æ
+		// è·å–å…±äº«å†…å­˜
 		if(FAILURE == shmget_get(get_shm_key(),get_shm_size()) )
 			return FAILURE;
 	}
@@ -292,17 +292,17 @@ static int init_share_memory( BOOLEAN bIsMaster )
 	pShmAddr = shm_attach();
 	if(NULL == pShmAddr) return FAILURE;
 
-	if( bIsMaster ) //¹²ÏíÄÚ´æÏÔÊ¾³õÊ¼»¯,ÏÈÆô¶¯!
+	if( bIsMaster ) //å…±äº«å†…å­˜æ˜¾ç¤ºåˆå§‹åŒ–,å…ˆå¯åŠ¨!
 		memset( pShmAddr, 0x00, get_shm_size() );
 
-	// Îª¸÷ÀàÊı¾İ·ÖÅä¹²ÏíÄÚ´æÆğÊ¼µØÖ·
+	// ä¸ºå„ç±»æ•°æ®åˆ†é…å…±äº«å†…å­˜èµ·å§‹åœ°å€
 	allocate_shm(pShmAddr);
 
 	return get_shmid();
 }
 
 /***********************************************************
-* Description:    »ñÈ¡¹²ÏíÄÚ´æµØÖ·
+* Description:    è·å–å…±äº«å†…å­˜åœ°å€
 ***********************************************************/
 static void * get_shm_addr( int dtype )
 {
@@ -317,7 +317,7 @@ static int get_sem_key()
 {
 	char acFile[256] = { 0 };
 	int iSemKey =-1;
-	// ¸ÃÎÄ¼şÓÃÓÚ»ñÈ¡¹²ÏíÄÚ´æµÄkey
+	// è¯¥æ–‡ä»¶ç”¨äºè·å–å…±äº«å†…å­˜çš„key
 	sprintf( acFile, "%s%s", APP_DIR, SEM_CONF );
 	check_file_exist( acFile );
 	iSemKey = ftok( acFile, SEM_KEY_ID );
@@ -337,15 +337,15 @@ static int semget_create( int iSemKey )
 	if( iSemKey == FAILURE )
 		return FAILURE;
 
-	// ´´½¨ËùÓĞÓÃ»§¿É¶ÁĞ´µÄĞÅºÅÁ¿
+	// åˆ›å»ºæ‰€æœ‰ç”¨æˆ·å¯è¯»å†™çš„ä¿¡å·é‡
 	s_SemId = semget( iSemKey, SEM_NUM, 0666 | IPC_CREAT );
 	if( -1 == s_SemId )
 	{
 		printf( "semget_create:semget() failed!!\n" );
 		return FAILURE;
 	}
-	// ³õÊ¼»¯ĞÅºÅÁ¿£º
-	//Ê¹ÓÃforÑ­»·ºÍSETVALµ¥¶ÀÉèÖÃÃ¿¸öĞÅºÅÁ¿ÖµÎª1¡ª¡ª¿É»ñµÃ
+	// åˆå§‹åŒ–ä¿¡å·é‡ï¼š
+	//ä½¿ç”¨forå¾ªç¯å’ŒSETVALå•ç‹¬è®¾ç½®æ¯ä¸ªä¿¡å·é‡å€¼ä¸º1â€”â€”å¯è·å¾—
 	for( i = 0; i < SEM_NUM; i++ )
 	{
 		if( semctl( s_SemId, i, SETVAL, 1 ) < 0 )
@@ -373,13 +373,13 @@ static int semget_get( int iSemKey )
 
 
 /***********************************************************
-* Description: ´´½¨ĞÅºÅÁ¿
-   bIsMaster ÎªÕæ´´½¨£¬·ñÔò»ñÈ¡
+* Description: åˆ›å»ºä¿¡å·é‡
+   bIsMaster ä¸ºçœŸåˆ›å»ºï¼Œå¦åˆ™è·å–
 ***********************************************************/
 static int create_semaphore( BOOLEAN bIsMaster )
 {
 	if( bIsMaster )
-		// ´´½¨ËùÓĞÓÃ»§¿É¶ÁĞ´µÄĞÅºÅÁ¿
+		// åˆ›å»ºæ‰€æœ‰ç”¨æˆ·å¯è¯»å†™çš„ä¿¡å·é‡
 		semget_create( get_sem_key() );
 	else
 		semget_get( get_sem_key());
@@ -389,7 +389,7 @@ static int create_semaphore( BOOLEAN bIsMaster )
 }
 
 /***********************************************************
-* Description:    É¾³ı¹²ÏíÄÚ´æ
+* Description:    åˆ é™¤å…±äº«å†…å­˜
 ***********************************************************/
 int  del_shm( )
 {
@@ -404,7 +404,7 @@ int  del_shm( )
 }
 
 /***********************************************************
-* Description:   ¶Ôµ¥¸öĞÅºÅÁ¿V²Ù×÷£¬ÊÍ·Å×ÊÔ´;
+* Description:   å¯¹å•ä¸ªä¿¡å·é‡Væ“ä½œï¼Œé‡Šæ”¾èµ„æº;
 ***********************************************************/
 static int unlock_sem( int slNo )
 {
@@ -418,8 +418,8 @@ static int unlock_sem( int slNo )
 
 /***********************************************************
 * Description:
-   ¶Ôµ¥¸öĞÅºÅÁ¿P²Ù×÷£¬È¡µÃ×ÊÔ´
-   Ê¹ÓÃSEM_UNDOÑ¡Ïî£¬·ÀÖ¹¸Ã½ø³ÌÒì³£ÍË³öÊ±¿ÉÄÜµÄËÀËø£»
+   å¯¹å•ä¸ªä¿¡å·é‡Pæ“ä½œï¼Œå–å¾—èµ„æº
+   ä½¿ç”¨SEM_UNDOé€‰é¡¹ï¼Œé˜²æ­¢è¯¥è¿›ç¨‹å¼‚å¸¸é€€å‡ºæ—¶å¯èƒ½çš„æ­»é”ï¼›
 ***********************************************************/
 static int lock_sem( int slNo )
 {
@@ -432,7 +432,7 @@ static int lock_sem( int slNo )
 }
 
 /***********************************************************
-* Description:   »ñÈ¡ĞÅºÅÁ¿µÄÖµ
+* Description:   è·å–ä¿¡å·é‡çš„å€¼
 ***********************************************************/
 static int get_sem( int slNo )
 {
@@ -441,7 +441,7 @@ static int get_sem( int slNo )
 }
 
 /***********************************************************
-* Description:   É¾³ıĞÅºÅÁ¿
+* Description:   åˆ é™¤ä¿¡å·é‡
 ***********************************************************/
 int del_sem( void )
 {
@@ -468,15 +468,15 @@ static void set_shmcellval(T_ShmCellVal*        shmVal,int no,int ll)
 
 /***********************************************************
 * Description:
-    SNMP´úÀíÊ¹ÓÃµÄÊı¾İ¸üĞÂ½Ó¿Ú£»
-    ¸üĞÂÊı¾İ£¬·µ»Ø¸üĞÂµÄ×Ö½ÚÊı£»
-    Êµ¼ÊÉÏ£¬ÕâĞ©³õÊ¼»¯µÄ¹¤×÷¶¼¿ÉÒÔ²»ÓÃ´úÂëÀ´ÊµÏÖ£¬
-    ±ÈÈçÔÚÕæÊµµÄÏîÄ¿ÖĞ£¬ÎÒÃÇÍùÍù»á¶¨ÒåËùÓĞĞèÒªµÄ¼à¿ØÏî¡£
-    ¶¨ÒåµÄÄÚÈİÎŞ·Ç¾ÍÊÇ¸÷¸ö¼à¿ØÁ¿µÄÊôĞÔ£¬
-    ÈçÊı¾İÀàĞÍ£¬×Ö½Ú³¤¶È£¬¶ÁĞ´È¨ÏŞ£¬Êı×éÊıÁ¿£¬È±Ê¡ÖµµÈµÈ¡£
-    Õâ·İ¶¨ÒåÎÄ¼şÎÒÃÇ¿ÉÒÔ³ÆÖ®ÎªÏµÍ³¼à¿Ø¶ÔÏóµÄÊı¾İ×Öµä¡£
-    ÎÒÃÇÖ»Òª½âÎö¸ÃÊı¾İ×ÖµäÉú³ÉÒ»·İÓë´úÂëÖĞ½á¹¹ÌåÒ»ÖÂµÄ¶ş½øÖÆµÄÎÄ¼ş£¬
-    Ã¿´Î³õÊ¼»¯Ê±Ö»ÒªÖ±½Ó¶ÁÈ¡¸ÃÎÄ¼şµÄÄÚÈİµ½¹²ÏíÄÚ´æ¶Î£¬¼´¿ÉÍê³ÉÏµÍ³µÄ³õÊ¼»¯µÄ¹¤×÷¡£
+    SNMPä»£ç†ä½¿ç”¨çš„æ•°æ®æ›´æ–°æ¥å£ï¼›
+    æ›´æ–°æ•°æ®ï¼Œè¿”å›æ›´æ–°çš„å­—èŠ‚æ•°ï¼›
+    å®é™…ä¸Šï¼Œè¿™äº›åˆå§‹åŒ–çš„å·¥ä½œéƒ½å¯ä»¥ä¸ç”¨ä»£ç æ¥å®ç°ï¼Œ
+    æ¯”å¦‚åœ¨çœŸå®çš„é¡¹ç›®ä¸­ï¼Œæˆ‘ä»¬å¾€å¾€ä¼šå®šä¹‰æ‰€æœ‰éœ€è¦çš„ç›‘æ§é¡¹ã€‚
+    å®šä¹‰çš„å†…å®¹æ— éå°±æ˜¯å„ä¸ªç›‘æ§é‡çš„å±æ€§ï¼Œ
+    å¦‚æ•°æ®ç±»å‹ï¼Œå­—èŠ‚é•¿åº¦ï¼Œè¯»å†™æƒé™ï¼Œæ•°ç»„æ•°é‡ï¼Œç¼ºçœå€¼ç­‰ç­‰ã€‚
+    è¿™ä»½å®šä¹‰æ–‡ä»¶æˆ‘ä»¬å¯ä»¥ç§°ä¹‹ä¸ºç³»ç»Ÿç›‘æ§å¯¹è±¡çš„æ•°æ®å­—å…¸ã€‚
+    æˆ‘ä»¬åªè¦è§£æè¯¥æ•°æ®å­—å…¸ç”Ÿæˆä¸€ä»½ä¸ä»£ç ä¸­ç»“æ„ä½“ä¸€è‡´çš„äºŒè¿›åˆ¶çš„æ–‡ä»¶ï¼Œ
+    æ¯æ¬¡åˆå§‹åŒ–æ—¶åªè¦ç›´æ¥è¯»å–è¯¥æ–‡ä»¶çš„å†…å®¹åˆ°å…±äº«å†…å­˜æ®µï¼Œå³å¯å®Œæˆç³»ç»Ÿçš„åˆå§‹åŒ–çš„å·¥ä½œã€‚
 ***********************************************************/
 static int  updata_cellvalue( int dType, int no, int ll, void* pV, int diretion )
 {
@@ -494,14 +494,14 @@ static int  updata_cellvalue( int dType, int no, int ll, void* pV, int diretion 
 
 	set_shmcellval(&shmVal,no,ll);
 
-	// ÉèÖÃ»ò»ñÈ¡
-	// ÉèÖÃÊ±: pV -> shmVal.uValue ,»ñÈ¡Ê±ÎŞĞè²Ù×÷
+	// è®¾ç½®æˆ–è·å–
+	// è®¾ç½®æ—¶: pV -> shmVal.uValue ,è·å–æ—¶æ— éœ€æ“ä½œ
 	if( TO_SHM == diretion )
 		app_memcpy( pV, &shmVal.uValue, ll, diretion );
 
 	ret = update_shm_data( dType, &shmVal, diretion );
 
-	// »ñÈ¡Ê±: shmVal.uValue -> pv,ÉèÖÃÊ±ÎŞĞè²Ù×÷
+	// è·å–æ—¶: shmVal.uValue -> pv,è®¾ç½®æ—¶æ— éœ€æ“ä½œ
 	if( (FROM_SHM == diretion) && (0 < ret) )
 		ret = app_memcpy( pV, &shmVal.uValue, ret, diretion );
 
@@ -518,7 +518,7 @@ static void* get_update_addr(int dType,const T_ShmCellVal *pValue)
 	T_MapTable   *pMapTable= get_maptable( dType );
 	
 	if(NULL != pMapTable)
-	{     // È¡Ö¸¶¨Î»ÖÃµÄµ¥ÔªµØÖ·
+	{     // å–æŒ‡å®šä½ç½®çš„å•å…ƒåœ°å€
 		pShmAddr += pMapTable[pValue->iNo].iOffset;
 		return (void*)pShmAddr;
 	}else
@@ -539,9 +539,9 @@ static int get_update_len(int dType,const T_ShmCellVal *pValue)
 
 /***********************************************************
 * Description:
-        SNMP´úÀíÊ¹ÓÃµÄÊı¾İ¸üĞÂ½Ó¿Ú£»
-        pValue ´«ÈëµÄÊÇT_ShmCellVal Ö¸Õë,×÷ÎªÊäÈëÊä³ö£»
-        ·µ»Ø¿½±´µÄ³¤¶È;
+        SNMPä»£ç†ä½¿ç”¨çš„æ•°æ®æ›´æ–°æ¥å£ï¼›
+        pValue ä¼ å…¥çš„æ˜¯T_ShmCellVal æŒ‡é’ˆ,ä½œä¸ºè¾“å…¥è¾“å‡ºï¼›
+        è¿”å›æ‹·è´çš„é•¿åº¦;
 ***********************************************************/
 static int update_shm_data( int dType, T_ShmCellVal *pValue, int diretion )
 {
@@ -560,19 +560,19 @@ static int update_shm_data( int dType, T_ShmCellVal *pValue, int diretion )
 
 
 /*
-   ¸üĞÂËùÓĞÊı¾İ£º
-   ÏÂÃæÓ²±àÂëÁËÖ»ÓĞ¼¸¸öÊı¾İµÄ²ÎÊı½á¹¹£¬
-   Êµ¼ÊÖĞ£¬Ò»¸öÏµÍ³µÄ²ÎÊıÔ¶Ô¶²»Ö»ÕâĞ©£¬Èç¹û»¹Ê¹ÓÃÕâÖÖ·½Ê½£¬¿Ï¶¨²»ÊÇÒ»¸öºÃµÄ½â¾ö·½°¸¡£
-   Ò»°ãÇé¿öÏÂ£¬¶ÔÓÚ¶à¸öÊı¾İµÄ´¦Àí·½Ê½×î¼ò½àµÄ±àÂëĞÎÊ½ÊÇÊ¹ÓÃÑ­»·¡£
-   ¶øÊ¹ÓÃÑ­»·±ØÈ»ÒªÇó¶ÔËùÓĞµÄÊı¾İÀàĞÍµÄ´¦Àí·½Ê½¶¼Ò»Ñù¡£
-   ÒÀÕÕÕâÖÖË¼Â·£¬³£¹æµÄ±àÂë·½Ê½ÊÇ¶¨ÒåÍ¨ÓÃµÄ½á¹¹ÌåºÍÔö¼Ó¶îÍâµÄ¿É¹©Ñ­»·Í³Ò»´¦ÀíµÄĞÅÏ¢£¬ÈçÎ¨Ò»±êÊ¶µÄ·½·¨¡£
-   ¶ÔÓÚÊı¾İµÄ´¦Àí½ÏÎª³£¹æµÄ±àÂë¼¼ÇÉÊÇ½«¶ÔÏó·ÖÎª£ºÊıÖµ¡¢ÊôĞÔ¡¢±êÊ¶£»
-   ²ÉÓÃÕâÖÖ·Ö²ãµÄË¼Ïë£¬ËùÓĞµÄÊı¾İ¶¼³éÏóÎªÍ³Ò»µÄ´¦Àí·½·¨ÁË£¡
-   ÕâÀï¾Í²»ÏêÊöÁË£¬¡°·Ï»°¡±ËÆºõ¹»¶àÁË£¡
+   æ›´æ–°æ‰€æœ‰æ•°æ®ï¼š
+   ä¸‹é¢ç¡¬ç¼–ç äº†åªæœ‰å‡ ä¸ªæ•°æ®çš„å‚æ•°ç»“æ„ï¼Œ
+   å®é™…ä¸­ï¼Œä¸€ä¸ªç³»ç»Ÿçš„å‚æ•°è¿œè¿œä¸åªè¿™äº›ï¼Œå¦‚æœè¿˜ä½¿ç”¨è¿™ç§æ–¹å¼ï¼Œè‚¯å®šä¸æ˜¯ä¸€ä¸ªå¥½çš„è§£å†³æ–¹æ¡ˆã€‚
+   ä¸€èˆ¬æƒ…å†µä¸‹ï¼Œå¯¹äºå¤šä¸ªæ•°æ®çš„å¤„ç†æ–¹å¼æœ€ç®€æ´çš„ç¼–ç å½¢å¼æ˜¯ä½¿ç”¨å¾ªç¯ã€‚
+   è€Œä½¿ç”¨å¾ªç¯å¿…ç„¶è¦æ±‚å¯¹æ‰€æœ‰çš„æ•°æ®ç±»å‹çš„å¤„ç†æ–¹å¼éƒ½ä¸€æ ·ã€‚
+   ä¾ç…§è¿™ç§æ€è·¯ï¼Œå¸¸è§„çš„ç¼–ç æ–¹å¼æ˜¯å®šä¹‰é€šç”¨çš„ç»“æ„ä½“å’Œå¢åŠ é¢å¤–çš„å¯ä¾›å¾ªç¯ç»Ÿä¸€å¤„ç†çš„ä¿¡æ¯ï¼Œå¦‚å”¯ä¸€æ ‡è¯†çš„æ–¹æ³•ã€‚
+   å¯¹äºæ•°æ®çš„å¤„ç†è¾ƒä¸ºå¸¸è§„çš„ç¼–ç æŠ€å·§æ˜¯å°†å¯¹è±¡åˆ†ä¸ºï¼šæ•°å€¼ã€å±æ€§ã€æ ‡è¯†ï¼›
+   é‡‡ç”¨è¿™ç§åˆ†å±‚çš„æ€æƒ³ï¼Œæ‰€æœ‰çš„æ•°æ®éƒ½æŠ½è±¡ä¸ºç»Ÿä¸€çš„å¤„ç†æ–¹æ³•äº†ï¼
+   è¿™é‡Œå°±ä¸è¯¦è¿°äº†ï¼Œâ€œåºŸè¯â€ä¼¼ä¹å¤Ÿå¤šäº†ï¼
  */
 
 /***********************************************************
-* Description:   ¸üĞÂÍ¨ÓÃ½á¹¹ÌåÓë¹²ÏíÄÚ´æµÄÊı¾İ
+* Description:   æ›´æ–°é€šç”¨ç»“æ„ä½“ä¸å…±äº«å†…å­˜çš„æ•°æ®
 ***********************************************************/
 static void _update_data(void* pData, int dType,int direction)
 {
@@ -592,7 +592,7 @@ static void _update_data(void* pData, int dType,int direction)
 }
 
 /***********************************************************
-* Description:   ²ÎÊı½á¹¹Ìå±äÁ¿Óë¹²ÏíÄÚ´æÊı¾İ¸üĞÂ
+* Description:   å‚æ•°ç»“æ„ä½“å˜é‡ä¸å…±äº«å†…å­˜æ•°æ®æ›´æ–°
 ***********************************************************/
 static void update_para_data(T_ParaData* pData, int direction)
 {
@@ -602,7 +602,7 @@ static void update_para_data(T_ParaData* pData, int direction)
 }
 
 /***********************************************************
-* Description:   ÊµÊ±Êı¾İ½á¹¹Ìå±äÁ¿Óë¹²ÏíÄÚ´æÊı¾İ¸üĞÂ
+* Description:   å®æ—¶æ•°æ®ç»“æ„ä½“å˜é‡ä¸å…±äº«å†…å­˜æ•°æ®æ›´æ–°
 ***********************************************************/
 static void update_realtime_data(T_RealData* pData, int direction)
 {
@@ -618,7 +618,7 @@ static void update_realtime_data(T_RealData* pData, int direction)
 }
 
 /***********************************************************
-* Description:  ¸æ¾¯Êı¾İ½á¹¹Ìå±äÁ¿Óë¹²ÏíÄÚ´æÊı¾İ¸üĞÂ
+* Description:  å‘Šè­¦æ•°æ®ç»“æ„ä½“å˜é‡ä¸å…±äº«å†…å­˜æ•°æ®æ›´æ–°
 ***********************************************************/
 static void update_alarm_data(T_AlarmData* pData, int direction)
 {
@@ -628,9 +628,9 @@ static void update_alarm_data(T_AlarmData* pData, int direction)
 
 
 /***********************************************************
-* Description:   ÒµÎñ½ø³ÌÊ¹ÓÃ: ½á¹¹Ìå±äÁ¿Óë¹²ÏíÄÚ´æÊı¾İ¸üĞÂ£»
-   pStrVal,ÎªÒµÎñ½ø³ÌÖĞ½á¹¹Ìå±äÁ¿£»
-   dir,È¡ÖµÎªFROM_SHMºÍTO_SHM,·Ö±ğ±íÊ¾¶ÁĞ´¹²ÏíÄÚ´æ£»
+* Description:   ä¸šåŠ¡è¿›ç¨‹ä½¿ç”¨: ç»“æ„ä½“å˜é‡ä¸å…±äº«å†…å­˜æ•°æ®æ›´æ–°ï¼›
+   pStrVal,ä¸ºä¸šåŠ¡è¿›ç¨‹ä¸­ç»“æ„ä½“å˜é‡ï¼›
+   dir,å–å€¼ä¸ºFROM_SHMå’ŒTO_SHM,åˆ†åˆ«è¡¨ç¤ºè¯»å†™å…±äº«å†…å­˜ï¼›
 ***********************************************************/
 static int update_data(void* pStrVal, int dType, int dir)
 {
@@ -649,10 +649,10 @@ static int update_data(void* pStrVal, int dType, int dir)
 }
 
 /***********************************************************
-* Description:   ÒµÎñ½ø³ÌÊ¹ÓÃ:
-   ´Ó¹²ÏíÄÚ´æÖĞ¶ÁÊı¾İ¸üĞÂµ½½á¹¹Ìå
-   pStrVal,ÎªÒµÎñ½ø³ÌÖĞ½á¹¹Ìå±äÁ¿Ö¸Õë;
-   dType:Êı¾İÀàĞÍ
+* Description:   ä¸šåŠ¡è¿›ç¨‹ä½¿ç”¨:
+   ä»å…±äº«å†…å­˜ä¸­è¯»æ•°æ®æ›´æ–°åˆ°ç»“æ„ä½“
+   pStrVal,ä¸ºä¸šåŠ¡è¿›ç¨‹ä¸­ç»“æ„ä½“å˜é‡æŒ‡é’ˆ;
+   dType:æ•°æ®ç±»å‹
 ***********************************************************/
 int app_get_data(void* pStrVal, int dType)
 {
@@ -661,10 +661,10 @@ int app_get_data(void* pStrVal, int dType)
 }
 
 /***********************************************************
-* Description:   ÒµÎñ½ø³ÌÊ¹ÓÃ:
-   ´Ó½á¹¹ÌåĞ´µ½¹²ÏíÄÚ´æÖĞ
-   pStrVal,ÎªÒµÎñ½ø³ÌÖĞ½á¹¹Ìå±äÁ¿Ö¸Õë;
-   dType:Êı¾İÀàĞÍ
+* Description:   ä¸šåŠ¡è¿›ç¨‹ä½¿ç”¨:
+   ä»ç»“æ„ä½“å†™åˆ°å…±äº«å†…å­˜ä¸­
+   pStrVal,ä¸ºä¸šåŠ¡è¿›ç¨‹ä¸­ç»“æ„ä½“å˜é‡æŒ‡é’ˆ;
+   dType:æ•°æ®ç±»å‹
 ***********************************************************/
 int app_set_data(void* pStrVal, int dType)
 {
@@ -674,12 +674,12 @@ int app_set_data(void* pStrVal, int dType)
 
 
 /***********************************************************
-* Description:   snmp½ø³ÌÊ¹ÓÃ:
-   ´Ó¹²ÏíÄÚ´æÖĞ¶ÁÊı¾İµ½pV
-   dType:Êı¾İÀàĞÍ
-   no:ĞòºÅ
-   ll:×Ö½Ú³¤¶È
-   pV:±äÁ¿µØÖ·
+* Description:   snmpè¿›ç¨‹ä½¿ç”¨:
+   ä»å…±äº«å†…å­˜ä¸­è¯»æ•°æ®åˆ°pV
+   dType:æ•°æ®ç±»å‹
+   no:åºå·
+   ll:å­—èŠ‚é•¿åº¦
+   pV:å˜é‡åœ°å€
 ***********************************************************/
 int snmp_get_data( int dType, int no, int ll, void* pV )
 {
@@ -688,12 +688,12 @@ int snmp_get_data( int dType, int no, int ll, void* pV )
 }
 
 /***********************************************************
-* Description:   snmp½ø³ÌÊ¹ÓÃ:
-   ½«pVÄÚÈİĞ´Èëµ½¹²ÏíÄÚ´æÖĞ
-   dType:Êı¾İÀàĞÍ
-   no:ĞòºÅ
-   ll:×Ö½Ú³¤¶È
-   pV:±äÁ¿µØÖ·
+* Description:   snmpè¿›ç¨‹ä½¿ç”¨:
+   å°†pVå†…å®¹å†™å…¥åˆ°å…±äº«å†…å­˜ä¸­
+   dType:æ•°æ®ç±»å‹
+   no:åºå·
+   ll:å­—èŠ‚é•¿åº¦
+   pV:å˜é‡åœ°å€
 ***********************************************************/
 int snmp_set_data( int dType, int no, int ll, void* pV )
 {
@@ -703,8 +703,8 @@ int snmp_set_data( int dType, int no, int ll, void* pV )
 
 
 /***********************************************************
-* Description:¹²ÏíÄÚ´æºÍĞÅºÅÁ¿³õÊ¼»¯
-   isMasterÖ¸Ê¾ÊÇ·ñÎªÖ÷ÒµÎñ½ø³Ì£¬¸Ã½ø³Ì¸ºÔğ´´½¨ºÍ³õÊ¼»¯
+* Description:å…±äº«å†…å­˜å’Œä¿¡å·é‡åˆå§‹åŒ–
+   isMasteræŒ‡ç¤ºæ˜¯å¦ä¸ºä¸»ä¸šåŠ¡è¿›ç¨‹ï¼Œè¯¥è¿›ç¨‹è´Ÿè´£åˆ›å»ºå’Œåˆå§‹åŒ–
 ***********************************************************/
 static void init_shm_sem(BOOLEAN isMaster)
 {
@@ -717,7 +717,7 @@ static void init_shm_sem(BOOLEAN isMaster)
 
 
 /***********************************************************
-* Description:Ö÷½ø³Ì µ÷ÓÃ³õÊ¼»¯¹²ÏíÄÚ´æºÍĞÅºÅÁ¿
+* Description:ä¸»è¿›ç¨‹ è°ƒç”¨åˆå§‹åŒ–å…±äº«å†…å­˜å’Œä¿¡å·é‡
 ***********************************************************/
 
 void init_shm_sem_master()
@@ -726,7 +726,7 @@ void init_shm_sem_master()
 }
 
 /***********************************************************
-* Description:·ÇÖ÷½ø³Ì µ÷ÓÃ³õÊ¼»¯¹²ÏíÄÚ´æºÍĞÅºÅÁ¿
+* Description:éä¸»è¿›ç¨‹ è°ƒç”¨åˆå§‹åŒ–å…±äº«å†…å­˜å’Œä¿¡å·é‡
 ***********************************************************/
 void init_shm_sem_slave()
 {
