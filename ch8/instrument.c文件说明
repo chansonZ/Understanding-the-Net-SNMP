@@ -1,0 +1,4 @@
+instrument.c：
+该文件是用于 C/C++中用于自动生成函数关系调用图的
+请参考 http://www.ibm.com/developerworks/cn/linux/l-graphvis/
+第8章 中的函数关系调用图是由它们做出来的，这张图就是：图8-4	程序运行流程图
