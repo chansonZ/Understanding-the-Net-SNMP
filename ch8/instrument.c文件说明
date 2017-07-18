@@ -3,3 +3,9 @@ instrument.c：
 请参考 http://www.ibm.com/developerworks/cn/linux/l-graphvis/
 第8章 中的函数关系调用图是由它们做出来的，这张图就是：图8-4	程序运行流程图
 如何编译： 将 -finstrument-functions 加入到 CFLAGS 标识中
+
+主要过程：
+编译： CFLAGS=-g -O0 -finstrument-functions
+运行程序：./nmsapp
+运行pvtrace: ./pvtrace nmsapp 上述产生 graph.dot文件
+输出图形：dot -Tjpg graph.dot -o test4.jpg
